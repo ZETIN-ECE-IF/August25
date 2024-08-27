@@ -1,6 +1,6 @@
 24.8.25(일) 
   1. 아두이노 나노에서 균형 모터와 가속도 센서를 처리하고 오렌지 보드(아두이노 우노)에서 조향과 RC 통신을 하기로 함.
-  2. 위의 변경 사항을 CONTROL_PS2_Balacing_bike.ino와 balacing_bike.ino로 옮김
+  2. 위의 변경 사항을 CONTROL_PS2_Balacing_bike.ino와 Dir_Acc.ino로 옮김
   3. 회로도 리셋 스위치 추가하고 조향 모터의 엔코더 라인 삭제, 일부 핀 수정함.
 
 24.8.27(화) 
