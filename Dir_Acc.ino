@@ -3,7 +3,7 @@
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 
-// PS2 컨트롤러용 핀
+// PS2 컨트롤러용 핀  
 #define PS2_DAT        12    
 #define PS2_CMD        11
 #define PS2_SEL        10
@@ -11,24 +11,25 @@
 
 #define pressures   false
 #define rumble      false
-#define servo       6
+#define servo       3
 
 PS2X ps2x; // create PS2 Controller Class
 
-// 뒷바퀴 모터 핀 선언부 (2,3,9)
+// 뒷바퀴 모터 핀 선언부 (7, 6, 8)
 int IN3Pin = 7;
-int IN4Pin = 8; 
-int EN2Pin = 3; 
+int IN4Pin = 6; 
+int EN2Pin = 8; 
 
 int error = 0;
 byte type = 0;
 byte vibrate = 0;
 int up_down=90;
+int wheelspeed = 130;
 
 // 이 부분은 servo용
 Servo myservo;
-byte degree=0;
-
+byte degree=62;
+int cur_degree=62;
 void setup(){
   Serial.begin(57600);
 
@@ -84,6 +85,11 @@ void setup(){
       Serial.print("Wireless Sony DualShock Controller found ");
       break;
    }
+   
+ cur_degree = myservo.read();
+ Serial.println(cur_degree);
+ delay(100);
+ 
 }
 
 void loop() {
@@ -114,36 +120,36 @@ void loop() {
 
     if(ps2x.Button(PSB_PAD_RIGHT)){
       Serial.println("Right held this hard: ");
-      degree+=20;
+      degree += 20;
       //servo모터 돌리기 용으로 넣어놈. 밑에거는 누르는 강도를 나타내는 듯. 확인은 안 해봄;;
-      degree = (degree <=150)? degree : 150;
-      Serial.println(ps2x.Analog(PSAB_PAD_RIGHT), DEC);
+      degree = (degree - cur_degree <= 60)? degree : (cur_degree + 60);
+      //Serial.println(ps2x.Analog(PSAB_PAD_RIGHT), DEC);
     }
     if(ps2x.Button(PSB_PAD_LEFT)){
       Serial.println("LEFT held this hard: ");
-      degree-=20;
-      degree = (degree >=30)? degree : 30;
-      Serial.println(ps2x.Analog(PSAB_PAD_LEFT), DEC);
+      degree -= 20;
+      degree = (cur_degree - degree <= 60)? degree : (cur_degree - 60);
+      //Serial.println(ps2x.Analog(PSAB_PAD_LEFT), DEC);
     }
 
     if(ps2x.Button(PSB_TRIANGLE)){
       digitalWrite(IN3Pin, LOW);
       digitalWrite(IN4Pin, HIGH);
-      analogWrite(EN2Pin, 150);
+      analogWrite(EN2Pin, wheelspeed);
       Serial.println("pressed Front");
     } 
 
     else if(ps2x.Button(PSB_CROSS)){
       digitalWrite(IN3Pin, HIGH);
       digitalWrite(IN4Pin, LOW);
-      analogWrite(EN2Pin, 150);
+      analogWrite(EN2Pin, wheelspeed);
       Serial.println("pressed Back");
     } 
 
     else {
       digitalWrite(IN3Pin, LOW);
       digitalWrite(IN4Pin, LOW);
-      analogWrite(EN2Pin, 0);
+      analogWrite(EN2Pin, 50);
     } 
 
 
